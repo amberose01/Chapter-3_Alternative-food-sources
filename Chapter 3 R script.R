@@ -207,7 +207,104 @@ Anova(bin_molt2)
 emmeans(bin_molt2, pairwise~treatment)
 
 #graph the data
-percent_molt <- read_csv("percent_molt.csv")
+
+#no resource
+no_resource<-lw_survival[lw_survival$treatment=='no_resource',]
+total_no_resource<-length(no_resource$event1)
+total_no_resource
+
+no_resource_a<-length(which(no_resource$event1 == 1))
+no_resource1<-no_resource_a/total_no_resource*100
+no_resource1
+
+no_resource_b<-length(which(no_resource$event2 == 1))
+no_resource2<-0
+no_resource2
+
+#water
+water<-lw_survival[lw_survival$treatment=='water',]
+total_water<-length(water$event1)
+total_water
+
+water_a<-length(which(water$event1 == 1))
+water1<-water_a/total_water*100
+water1
+
+water2<-length(which(water$event2 == 1))
+water2
+
+#cmbs
+
+cmbs<-lw_survival[lw_survival$treatment=='cmbs_eggs',]
+total_cmbs<-length(cmbs$event1)
+total_cmbs
+
+cmbs_a<-length(which(cmbs$event1 == 1))
+cmbs1<-cmbs_a/total_cmbs*100
+cmbs1
+
+cmbs2<-length(which(cmbs$event2 == 1))
+cmbs2
+
+#Fructose
+sugar<-lw_survival[lw_survival$treatment=='sugar',]
+total_sugar<-length(sugar$event1)
+total_sugar
+
+sugar_a<-length(which(sugar$event1 == 1))
+sugar1<-sugar_a/total_sugar*100
+sugar1
+
+sugar2<-length(which(sugar$event2 == 1))
+sugar2
+
+#Wheast
+wheast<-lw_survival[lw_survival$treatment=='wheast',]
+total_wheast<-length(wheast$event1)
+total_wheast
+
+wheast_a<-length(which(wheast$event1 == 1))
+wheast1<-wheast_a/total_wheast*100
+wheast1
+
+wheast_b<-length(which(wheast$event2 == 1))
+wheast2<-wheast_b/total_wheast*100
+wheast2
+
+#Fructose and CMBS
+sugar_cmbs<-lw_survival[lw_survival$treatment=='sugar_cmbs',]
+total_sugar_cmbs<-length(sugar_cmbs$event1)
+total_sugar_cmbs
+
+sugar_cmbs_a<-length(which(sugar_cmbs$event1 == 1))
+sugar_cmbs1<-sugar_cmbs_a/total_sugar_cmbs*100
+sugar_cmbs1
+
+sugar_cmbs_b<-length(which(sugar_cmbs$event2 == 1))
+sugar_cmbs2<-sugar_cmbs_b/total_sugar_cmbs*100
+sugar_cmbs2
+
+#Wheast and CMBS
+wheast_cmbs<-lw_survival[lw_survival$treatment=='wheast_cmbs',]
+total_wheast_cmbs<-length(wheast_cmbs$event1)
+total_wheast_cmbs
+
+wheast_cmbs_a<-length(which(wheast_cmbs$event1 == 1))
+wheast_cmbs1<-wheast_cmbs_a/total_wheast_cmbs*100
+wheast_cmbs1
+
+wheast_cmbs_b<-length(which(wheast_cmbs$event2 == 1))
+wheast_cmbs2<-wheast_cmbs_b/total_wheast_cmbs*100
+wheast_cmbs2
+
+#create dataframe
+
+percent_molt <- data.frame(
+  treatment = c("no_resource","no_resource", "water","water","cmbs","cmbs","sugar","sugar","wheast","wheast","sugar_cmbs","sugar_cmbs","wheast_cmbs","wheast_cmbs" ),
+  percent = c(no_resource1, no_resource2, water1, water2, cmbs1, cmbs2, sugar1,sugar2,wheast1,wheast2,sugar_cmbs1,sugar_cmbs2, wheast_cmbs1, wheast_cmbs2),
+  molt = c("molt1","molt2","molt1","molt2","molt1","molt2","molt1","molt2","molt1","molt2","molt1","molt2","molt1","molt2")
+)
+
 percent_molt$treatment<-as.factor(percent_molt$treatment)
 percent_molt$treatment <- factor(percent_molt$treatment, c('no_resource','water','cmbs','sugar','wheast','sugar_cmbs','wheast_cmbs'))
 
@@ -350,151 +447,6 @@ days_to_molt_curves <- arrange_ggsurvplots(lw_molt1_curv, lw_molt2_curv,
 
 
 
-#old code for molting analysis
-
-#still do logistic for percentage for first and second molt
-#first molt, analyze all treatments, using cph model for first molt and treatments for all molters in each treatment
-#graphs= replace boxplots with survival curves, only includes treatments in which only one individuals
-
-### MOLT 1 GLM
-library(readr)
-library(lme4)
-glm_molt1<-glmer(raw_molt1~treatment+(1|date), poisson(link = 'log'), data=lw_survival)
-summary(glm_molt1)
-
-library(car)
-Anova(glm_molt1)
-emmeans(glm_molt1)
-
-#SECOND MOLT
-glm_molt2<-glm(molt2~treatment,poisson(link = 'log'), data=lw_survival)
-Anova(glm_molt2)
-summary(glm_molt2)
-
-
-#GRAPH THE DATA
-library(readr)
-lw_molting <- read_csv("lw_molting.csv")
-new.map_lwm<-na.omit(lw_molting)
-
-new.map_lwm$treatment<-as.factor(new.map_lwm$treatment)
-new.map_lwm$treatment <- factor(new.map_lwm$treatment, c('no_resource','water','wheast','sugar','cmbs_eggs','wheast_cmbs','sugar_cmbs'))
-
-#Boxplots on same graph
-library(ggplot2)
-ggplot(new.map_lwm, mapping=aes(x=treatment, y=day, fill=molt))+
-  geom_boxplot(aes(fill=molt))+
-  theme_bw()+
-  xlab("Treatment")+
-  ylab("Days to molt")+
-  scale_x_discrete(labels=c('No resource', 'Water', 'Wheast', 'Fructose','CMBS','Wheast & CMBS', 'Fructose & CMBS'))+
-  labs(fill='LW Development')+
-  scale_fill_manual(labels= c("Molt 1","Molt 2"),values=c('mistyrose2','khaki2'))
-
-#Panelled Boxplots
-days_to_molt<-ggplot(new.map_lwm, mapping=aes(x=treatment, y=day, fill=molt))+
-  geom_boxplot(aes(fill=molt))+
-  theme_bw()+
-  xlab("Treatment")+
-  ylab("Days to molt")+
-  scale_x_discrete(labels=c('No resource', 'Water', 'Wheast', 'Fructose','CMBS','Wheast & CMBS', 'Fructose & CMBS'))+
-  labs(fill='LW Development')+
-  scale_fill_manual(labels= c("Molt 1","Molt 2"),values=c('mistyrose2','khaki2'))+
-  facet_wrap(~molt, labeller=labeller(molt=
-                                        c("molt1"= "Molt 1",
-                                          "molt2"="Molt 2")))+
-  theme(axis.text.x = element_text(angle = 40, vjust = 0.6, hjust=0.5))+
-  theme(legend.position="none")
-
-#Panel proportion molted and day taken to molt
-library(ggpubr)
-lw_development <- ggarrange(percentage_molted, days_to_molt,
-                            labels = c("A", "B"),
-                            ncol = 1, nrow = 2)
-lw_development
-#Set treatments as a factor
-
-molt1_event <- read_csv("molt1_event.csv")
-molt1_event$event<-as.factor(molt1_event$event1)
-molt1_event$event<-as.factor(molt1_event$event2)
-
-molt1_event$treatment<-factor(molt1_event$treatment, c("no_resource","water","cmbs_eggs","wheast","sugar","wheast_cmbs","sugar_cmbs"))
-
-#create a formula using Surv(time,event), time=time until event occur. event= 1(event happened), 0(event did not happen)
-lw_molt1_surv<-Surv(time=molt1_event$molt1, event=(molt1_event$event1))
-
-#mixed effects analysis
-cox_prop3<-coxme(lw_molt1_surv~treatment+(1|date), data=molt1_event)
-cox_prop3
-summary(cox_prop3)
-
-#check assumptions of proportional hazards
-ph_test<-cox.zph(cox_prop3) #assumption is not met, p<0.05; suggested to add interaction of covariate*time
-ph_test
-plot(ph_test)
-
-#deviance- results are symmetrical around 0
-cox_prop4<-coxph(lw_molt1_surv~treatment, data=molt1_event)
-ggcoxdiagnostics(cox_prop4, type = "deviance", linear.predictions = FALSE)
-
-#post-hoc analysis
-library(emmeans)
-emmeans(cox_prop3, pairwise~treatment)
-
-#Plot all data
-library(survminer)
-
-#define variable being plotted using "strata"
-cox_prop3<-coxph(lw_molt1_surv~strata(treatment), data=molt1_event)
-fit2<-survfit(cox_prop3)
-fit2
-lw_plot<-ggsurvplot(fit2, data=molt1_event, risk.table=FALSE)
-lw_plot
-
-#molt 2 survival
-molt1_event$event<-as.factor(molt1_event$event2)
-
-#subset data where at least 1 individual molted
-library(dplyr)
-
-lw_molt2 <- molt1_event %>% filter(treatment %in% c("wheast", "wheast_cmbs","sugar_cmbs"))
-lw_molt2$treatment <- as.factor(lw_molt2$treatment)
-
-
-#create a formula using Surv(time,event), time=time until event occur. event= 1(event happened), 0(event did not happen)
-lw_molt2_surv<-Surv(time=lw_molt2$molt2, event=(lw_molt2$event2))
-
-#mixed effects analysis
-cox_prop3<-coxme(lw_molt2_surv~treatment+(1|date), data=lw_molt2)
-cox_prop3
-summary(cox_prop3)
-
-#check assumptions of proportional hazards
-ph_test<-cox.zph(cox_prop3) #assumption is not met, p<0.05; suggested to add interaction of covariate*time
-ph_test
-plot(ph_test)
-
-#deviance- results are symmetrical around 0
-cox_prop4<-coxph(lw_molt2_surv~treatment, data=molt1_event)
-ggcoxdiagnostics(cox_prop4, type = "deviance", linear.predictions = FALSE)
-
-#post-hoc analysis
-library(emmeans)
-emmeans(cox_prop3, pairwise~treatment)
-
-#Plot all data
-library(survminer)
-
-#define variable being plotted using "strata"
-cox_prop3<-coxph(lw_molt2_surv~strata(treatment), data=molt1_event)
-fit2<-survfit(cox_prop3)
-fit2
-lw_plot<-ggsurvplot(fit2, data=molt1_event, risk.table=FALSE)
-lw_plot
-
-
-
-
 ####CHOICE ASSAYS####
 
 #load package
@@ -535,8 +487,70 @@ aphid_stats<- lw_aphid %>%
 chisq.test(aphid_stats$count)
 
 #Plot percentage of choices
-lw_choice_percent <- read_csv("lw_choice_percent.csv")
-library(ggplot2)
+choice<- read_csv("choice.csv")
+
+#subset data
+lw_total_choice<-choice[choice$predator=='lacewing',]
+
+
+#percent choices for wheast
+lw_wheast<-lw_total_choice[lw_total_choice$treatment=='wheast_control',]
+
+lw_wheast_choosers<-length(which(lw_wheast$choice == 1))
+lw_wheast_choosers
+
+lw_control_choosers<-length(which(lw_wheast$choice == 0))
+lw_control_choosers
+
+wheast_na<-length(which(lw_wheast$percent == 0))
+wheast_na
+
+#calculate percentage of choosers
+lw_wheast_rm_na<-na.omit(lw_wheast)
+total<-length(lw_wheast_rm_na$choice)
+percent_wheast<-lw_wheast_choosers/total*100
+percent_wheast
+
+percent_water<-lw_control_choosers/total*100
+percent_water
+
+
+#percent choices for cmbs
+lw_cmbs<-lw_total_choice[lw_total_choice$treatment=='cmbs_control',]
+
+lw_cmbs_choosers<-length(which(lw_cmbs$choice == 1))
+lw_cmbs_choosers
+lw_blank_choosers<-length(which(lw_cmbs$choice == 0))
+lw_blank_choosers
+cmbs_na<- length(which(lw_cmbs$percent == 0))
+cmbs_na
+
+#calculate percentage
+lw_cmbs_rm_na<-na.omit(lw_cmbs)
+total2<-length(lw_cmbs_rm_na$choice)
+percent_cmbs<-lw_cmbs_choosers/total2*100
+percent_blank<-lw_blank_choosers/total2*100
+
+
+#percent choices for aphids
+lw_aphids<-lw_total_choice[lw_total_choice$treatment=='aphids_control',]
+
+lw_aphid_choosers<-length(which(lw_aphids$choice == 1))
+lw_blank2_choosers<-length(which(lw_aphids$choice == 0))
+aphid_na<- length(which(lw_aphids$percent == 0))
+
+#calculate percentage
+lw_aphid_rm_na<-na.omit(lw_aphids)
+total<-length(lw_aphid_rm_na$choice)
+percent_aphid<-lw_aphid_choosers/total*100
+percent_blank2<-lw_blank2_choosers/total*100
+
+#create dataframe
+lw_choice_percent <- data.frame(
+  treatment = c("wheast_control", "wheast_control", "cmbs_control","cmbs_control", "aphids_control","aphids_control"),
+  choice = c("treatment","control","treatment","control","treatment","control"),
+  percent = c(percent_wheast, percent_water, percent_cmbs, percent_blank, percent_aphid, percent_blank2)
+)
 
 lw_plot <- ggplot(lw_choice_percent, aes(x = treatment)) +
   geom_col(data = subset(lw_choice_percent, choice == "treatment"), 
@@ -565,9 +579,10 @@ library(readr)
 library(reshape2)
 
 x<-c("Wheast", "CMBS","Aphids") #define treatments
-y1<-c(12,23,14) #total number of lacewings that did not choose
-y2<-c(12,3,13) #total number of lacewings that chose treatment
-y3<-c(8,4,7) #total number of lacewings that chose control
+y1<-c(wheast_na,cmbs_na,aphid_na) #total number of lacewings that did not choose
+y2<-c(lw_wheast_choosers,lw_cmbs_choosers,lw_aphid_choosers) #total number of lacewings that chose treatment
+y3<-c(lw_control_choosers,lw_blank_choosers,lw_blank2_choosers) #total number of lacewings that chose control
+
 
 to_plot <- data.frame(x=x,y1=y1,y2=y2, y3=y3)
 melted<-melt(to_plot, id='x')
@@ -581,12 +596,6 @@ total_lw<-ggplot(melted,aes(x=x,y=value,fill=variable))+
   theme(axis.title.x=element_blank(),legend.title=element_blank(),legend.position="top", legend.text=element_text(size=12), axis.title.y=element_text(size=15),axis.text=element_text(size=15))
 
 total_lw
-
-library(ggpubr)
-lw_choice_combo <- ggarrange(total_lw, total_sdb,
-                             labels = c("A", "B"),
-                             ncol = 2, nrow = 1)
-lw_choice_combo
 
 
 ##sdb choice
@@ -627,7 +636,69 @@ chisq.test(sdb_aphids_stats$count)
 
 
 #Plot percentage of choices made
-sdb_choice_percent<-read_csv("sdb_choice_percent.csv")
+choice<- read_csv("choice.csv")
+
+#subset data
+sdb_total_choice<-choice[choice$predator=='sdb',]
+
+
+#percent choices for wheast
+sdb_wheast<-sdb_total_choice[sdb_total_choice$treatment=='wheast_control',]
+
+sdb_wheast_choosers<-length(which(sdb_wheast$choice == 1))
+sdb_wheast_choosers
+
+sdb_control_choosers<-length(which(sdb_wheast$choice == 0))
+sdb_control_choosers
+
+sdb_wheast_na<-length(which(sdb_wheast$percent == 0))
+sdb_wheast_na
+
+#calculate percentage of choosers
+sdb_wheast_rm_na<-na.omit(sdb_wheast)
+sdb_total<-length(sdb_wheast_rm_na$choice)
+sdb_percent_wheast<-sdb_wheast_choosers/sdb_total*100
+sdb_percent_wheast
+
+sdb_percent_water<-sdb_control_choosers/sdb_total*100
+sdb_percent_water
+
+
+#percent choices for cmbs
+sdb_cmbs<-sdb_total_choice[sdb_total_choice$treatment=='cmbs_control',]
+
+sdb_cmbs_choosers<-length(which(sdb_cmbs$choice == 1))
+sdb_cmbs_choosers
+sdb_blank_choosers<-length(which(sdb_cmbs$choice == 0))
+sdb_blank_choosers
+sdb_cmbs_na<- length(which(sdb_cmbs$percent == 0))
+sdb_cmbs_na
+
+#calculate percentage
+sdb_cmbs_rm_na<-na.omit(sdb_cmbs)
+sdb_total2<-length(sdb_cmbs_rm_na$choice)
+sdb_percent_cmbs<-sdb_cmbs_choosers/sdb_total2*100
+sdb_percent_blank<-sdb_blank_choosers/sdb_total2*100
+
+#percent choices for aphids
+sdb_aphids<-sdb_total_choice[sdb_total_choice$treatment=='aphids_control',]
+
+sdb_aphid_choosers<-length(which(sdb_aphids$choice == 1))
+sdb_blank2_choosers<-length(which(sdb_aphids$choice == 0))
+sdb_aphid_na<- length(which(sdb_aphids$percent == 0))
+
+#calculate percentage
+sdb_aphid_rm_na<-na.omit(sdb_aphids)
+sdb_total3<-length(sdb_aphid_rm_na$choice)
+sdb_percent_aphid<-sdb_aphid_choosers/sdb_total3*100
+sdb_percent_blank2<-sdb_blank2_choosers/sdb_total3*100
+
+#create dataframe
+sdb_choice_percent <- data.frame(
+  treatment = c("wheast_control", "wheast_control", "cmbs_control","cmbs_control", "aphids_control","aphids_control"),
+  choice = c("treatment","control","treatment","control","treatment","control"),
+  percent = c(sdb_percent_wheast, sdb_percent_water, sdb_percent_cmbs, sdb_percent_blank, sdb_percent_aphid, sdb_percent_blank2)
+)
 
 sdb_plot <- ggplot(sdb_choice_percent, aes(x = treatment)) +
   geom_col(data = subset(sdb_choice_percent, choice == "treatment"), 
@@ -651,22 +722,38 @@ sdb_plot <- ggplot(sdb_choice_percent, aes(x = treatment)) +
         legend.position = "none")
 sdb_plot
 
-#Plot all assays
-x<-c("Wheast", "CMBS","Aphids") #define treatments
-y1<-c(19,15,4) #total number of lacewings that did not choose
-y2<-c(14,11,14) #total number of lacewings that chose treatment
-y3<-c(6,9,6) #total number of lacewings that chose control
+#Bar graph of total reps for lacewings
+library(readr)
+library(reshape2)
 
-to_plot <- data.frame(x=x,y1=y1,y2=y2, y3=y3)
+sdb_x<-c("Wheast", "CMBS","Aphids") #define treatments
+sdb_y1<-c(sdb_wheast_na,sdb_cmbs_na,sdb_aphid_na) #total number of lacewings that did not choose
+sdb_y2<-c(sdb_wheast_choosers,sdb_cmbs_choosers,sdb_aphid_choosers) #total number of lacewings that chose treatment
+sdb_y3<-c(sdb_control_choosers,sdb_blank_choosers,sdb_blank2_choosers) #total number of lacewings that chose control
+
+
+to_plot <- data.frame(x=sdb_x,y1=sdb_y1,y2=sdb_y2, y3=sdb_y3)
 melted<-melt(to_plot, id='x')
 melted$x<-factor(melted$x,c("Wheast","CMBS","Aphids"))
 
 total_sdb<-ggplot(melted,aes(x=x,y=value,fill=variable))+ 
   geom_bar(stat="identity", width=0.6, color="black")+
   scale_fill_manual(values=c("lightgoldenrod2","deepskyblue4","darkolivegreen4"),labels=c('Non-choosers', 'Chose treatment', 'Chose blank'))+
+  ylab("Number of predators")+
   theme_bw()+
-  theme(axis.title.x=element_blank(), axis.title.y=element_blank(),legend.title=element_blank(),legend.position="top", legend.text=element_text(size=12), axis.text=element_text(size=15))
+  theme(axis.title.x=element_blank(),legend.title=element_blank(),legend.position="top", legend.text=element_text(size=12), axis.title.y=element_text(size=15),axis.text=element_text(size=15))
+
 total_sdb
+
+
+library(ggpubr)
+lw_choice_combo <- ggarrange(total_lw, total_sdb,
+                             labels = c("A", "B"),
+                             ncol = 2, nrow = 1)
+lw_choice_combo
+
+
+
 
 
 ####SDB Residency####
@@ -870,7 +957,7 @@ residency_plot
 final_residency<-annotate_figure(residency_plot,left = textGrob("Number of R. lophanthae", rot = 90), bottom = textGrob("Time (days)"))
 final_residency
 
-#Statistical analysis
+#Junk Statistical analysis
 library(readr)
 library(lme4)
 library(car)

@@ -1,0 +1,5 @@
+Metadata for treatment_res 
+Treatment	the specific treatment to be graphed. Includes either control, wheast_paste, wheast_spray, fructose, or sprite
+Plant	the specific plant ID given to each tree. Tree number 41 for each treatment represents the average for each treatment group.
+Day	the day that data was collected. Data was collected 1 hour, 4 hours, 8 hours and 24 hours after predator release, with data collection occurring on a 24 hours interval after this period
+Num_sdb	the number of scale destroyer beetles observed on each plant during each observation period (day). 

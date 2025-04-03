@@ -1,0 +1,9 @@
+Metadata for choice assays
+Shipment_date	The month/day/year the predator was received in the mail
+Trial_date	The month/day/year the trial began
+Predator	The predator under investigation, will include either lacewing or scale destroyer beetle (sdb)
+Treatment	The two choice treatment comparison including wheast and control (wheast_control), crapemyrtle bark scale and a blank (cmbs_control) and crapemyrtle aphids and a blank (aphids_control)
+Tod	The time of day to which the assay was performed
+Choice	The choice made by the predator. A “1” indicates a choice for the treatment group (either wheast, cmbs, or aphids) with a “0” indicating a choice for the control group. Cells that lack a value are predators that did not choose in the study
+Time_choice	The time taken for the insect to make a choice, expressed in minutes:seconds
+Percent	The number of predators that did and did not make a choice. If a predator made a choose (for the treatment or control) a “1” is illustrated. If a choice was not made, a “0” is included.

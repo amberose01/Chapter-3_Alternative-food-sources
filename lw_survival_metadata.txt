@@ -1,0 +1,15 @@
+Metadata for lw_survival
+date		the period to which the trial had begun. Includes either 1, 2, or 3 for the block
+predator	the predatory insect introduced into the dish- lacewings
+treatment 	the food resources given to the predator. Will include no resource, water only, wheast, sucrose, CMBS eggs, wheast and CMBS eggs, or fructose and CMBS eggs
+dishnumber	the unique identifying number for each petri dish. Each treatment should be composed of 10 dishes per specific date or 20 for the last date
+consumption	the number of CMBS consumed during the first 24 hours
+raw_molt1	The days taken to perform the first molt. Does not include survival data here
+raw_molt2	The days taken to perform the second molt. Does not include survival data here
+day1, day2…	survival (1) or mortality (0) of predator at each check. For example, if 	 predator lives for 3 days, then days 1, 2 and 3 will be recorded as "1's" will all following columns being "0's"
+survival	the sum of columns titled "day1", "day2", "day3", etc. representing the total number of days the predator survived
+event	Represents if death had occurred. If the insect had died, this column will have a value of "1". If the predator had not yet died, a value of "0" will be inserted here. All insects were monitored until mortality occurred meaning all cells have a value of “1”.
+molt1	The number of days taken for the insect to perform the first molt or die before molting (includes survival data)
+molt2	The number of days taken for the insect to perform the second molt or die before molting (includes survival data)
+event1	Represents if the first molt had occurred at the days expressed in “molt1”. If the insect molted, a value of “1” is provided. If the insect did not molt, a “0” is indicated meaning that the insect died before molting
+event2	Represents if the second molt had occurred at the days expressed in “molt2”. If the insect molted, a value of “1” is provided. If the insect did not molt, a “0” is indicated meaning that the insect died before molting.

@@ -1,0 +1,23 @@
+Metadata for Scale destroyer beetle residency
+Treenumber	The identification tag assigned to each tree in the study. Ranges from 1-40
+Treatment	the treatment group assigned to each tree. Includes a water spray (control), wheast spray (wheast_spray), wheast paste (wheast_paste), sugar spray (fructose), and sprite spray (sprite). Treatments were randomly assigned
+Aphid rating	a visual rating of crapemyrtle aphid densities at the beginning of the study [(1)- no aphids, (2)- few aphids scattered through the canopy (<10% of leaves), (3)- moderate density of aphids present on 10-50% of the canopy, (4) moderate density of aphids present on >50% of canopy, (5) high density of aphids present on >50% of the canopy]
+Sm_rating	a visual rating of sooty mold covering the plant at the beginning of the study [(1)- Little to no sooty mold on plant (<10% of total plant area), (2)- Low sooty mold levels (10-25% of plant area), (3)- moderate sooty mold levels (25-50% of plant area), (4)- Hogh sooty mold levels (50-75%), (5)- Extreme sooty mold conditions (>75%)]
+Twig_length	total linear length of all stems on the crapemyrtles (expressed in cm)
+Ant_rating	a visual ant ratings of various species of ants at the beginning of the study (0- no ants observed; 1- ants observed in pot media only; 2- few ants observed moving up and down the stem of the plant; 3- many ants observed moving up and down the stem of the plant; 4- many ants observed moving up and down the stem of the plant AND mounding at the base was observed).
+Under_cmbs	a visual rating of the percentage of area covered by crapemyrtle bark scale on the under/shaded side of the tree at the beginning of the study
+Top_cmbs	a visual rating of the percentage of area covered by crapemyrtle bark scale on the sunny side of the tree at the beginning of the study.
+Total_cmbs	the cumulative percentage of crapemyrtle bark scale found on the entire tree, taking into consideration “under_cmbs” and “upper_cmbs at the beginning of the study
+1hr,4hr,8hr	The total number of scale destroyer beetles found on each plant 1 hour, 4 hours, 8 hours, 24 hours, 48 hours, etc. after release.
+Sdb_sightings	The cumulative number of beetles observed on a specific plant over the entire course of the study (the sum of values in columns 1hr, 4hr, 8hr, etc)
+Pres_ab	The total number of days at least one beetle was found on a give plant. The count of all columns including at least 1 beetle sighting on a given day.
+Final_aphid	a visual rating of crapemyrtle aphid densities at the end of the study [(1)- no aphids, (2)- few aphids scattered through the canopy (<10% of leaves), (3)- moderate density of aphids present on 10-50% of the canopy, (4) moderate density of aphids present on >50% of canopy, (5) high density of aphids present on >50% of the canopy]
+Final_sm	a visual rating of sooty mold covering the plant at the end of the study [(1)- Little to no sooty mold on plant (<10% of total plant area), (2)- Low sooty mold levels (10-25% of plant area), (3)- moderate sooty mold levels (25-50% of plant area), (4)- Hogh sooty mold levels (50-75%), (5)- Extreme sooty mold conditions (>75%)]
+Final_ant	a visual ant ratings of various species of ants at the end of the study (0- no ants observed; 1- ants observed in pot media only; 2- few ants observed moving up and down the stem of the plant; 3- many ants observed moving up and down the stem of the plant; 4- many ants observed moving up and down the stem of the plant AND mounding at the base was observed).
+Final_cmbs_under	a visual rating of the percentage of area covered by crapemyrtle bark scale on the under/shaded side of the tree at the end of the study
+Final_cmbs_top	a visual rating of the percentage of area covered by crapemyrtle bark scale on the sunny side of the tree at the end of the study.
+Final_cmbs	the cumulative percentage of crapemyrtle bark scale found on the entire tree, taking into consideration “under_cmbs” and “upper_cmbs at the end of the study
+Resident_ne	observations of other natural enemies (excluding scale destroyer beetles) found on each plant throughout the study.
+
+
+
