@@ -1,40 +1,3 @@
-####Survival analysis####
-library(survival)
-library(readr)
-library(ggplot2)
-library(survminer)
-library(coxme)
-citation(package="survival")
-
-
-#Mock Data
-survival <- read_csv("survival.csv")
-
-#creating a formula using Surv(time,event), time=time until event occur. event= 1(event happened), 0(event did not happen)
-surv_form<-Surv(time=survival$time, event=(survival$event))
-
-#multivariate analysis
-
-cox_prop<-coxph(surv_form~treatment, data=survival)
-cox_prop
-summary(cox_prop)
-
-#checking assumptions
-cox.zph(cox_prop) #if values >0.05, hazards are proportional
-
-
-#post-hoc analysis
-library(emmeans)
-emmeans(cox_prop, pairwise~treatment)
-
-
-#use strata to define the variable being plotted
-cox_prop1<-coxph(surv_form~strata(treatment), data=survival)
-fit1<-survfit(cox_prop1)
-
-p1<-ggsurvplot(fit1, data=survival, risk.table=FALSE)
-p1         
-
 
 #### LW Survival ####
 library(survival)
@@ -72,7 +35,9 @@ plot(ph_test)
 ggcoxzph(ph_test)
 
 #deviance- results are symmetrical around 0
-ggcoxdiagnostics(cox_prop, type = "deviance", linear.predictions = FALSE)
+#define variable being plotted using "strata"
+cox_prop1<-coxph(lw_surv_form~strata(treatment), data=lw_surv)
+ggcoxdiagnostics(cox_prop1, type = "deviance", linear.predictions = FALSE)
 
 #post-hoc analysis
 library(emmeans)
@@ -144,7 +109,7 @@ sdb_surv_form<-Surv(time=sdb_surv$survival, event=(sdb_surv$event))
 
 #univariate analysis
 cox_prop2<-coxph(sdb_surv_form~treatment, data=sdb_surv)
-cox_prop1
+cox_prop2
 
 #mixed effects analysis
 cox_prop1<-coxme(sdb_surv_form~treatment+(1|date), data=sdb_surv)
@@ -157,12 +122,6 @@ ph_test<-cox.zph(cox_prop1) #assumption is not met, p<0.05; suggested to add int
 ph_test
 plot(ph_test)
 ggcoxzph(ph_test)
-
-library(survminer)
-library(survival)
-library(ggplot2)
-
-ggsurvplot(fit=cox_prop1, data= sdb_surv, fun = "cloglog")
 
 #deviance- are results symmetrical around 0?
 ggcoxdiagnostics(cox_prop2, type = "deviance", linear.predictions = FALSE)
@@ -206,11 +165,6 @@ sdb_plot4<-ggsurvplot(fit3, data=sdb_survival,
                       palette = c("darkgoldenrod1","aquamarine","hotpink","bisque2","cornflowerblue","coral","darkorchid1"),
                       xlab="Time (days)",xlim=c(0,60),break.x.by=5)
 sdb_plot4
-
-
-png(filename = "sample_plot.png", width = 800, height = 600)
-plot(x, y, main="Sample Plot", xlab="X-axis", ylab="Y-axis")
-dev.off()
 
 
 ###LW Development###
@@ -277,64 +231,6 @@ percentage_molted
 
 
 ####Days to molt####
-
-### MOLT 1 GLM
-library(readr)
-library(lme4)
-glm_molt1<-glmer(raw_molt1~treatment+(1|date), poisson(link = 'log'), data=lw_survival)
-summary(glm_molt1)
-
-library(car)
-Anova(glm_molt1)
-emmeans(glm_molt1)
-
-#SECOND MOLT
-glm_molt2<-glm(molt2~treatment,poisson(link = 'log'), data=lw_survival)
-Anova(glm_molt2)
-summary(glm_molt2)
-
-
-#GRAPH THE DATA
-library(readr)
-lw_molting <- read_csv("lw_molting.csv")
-new.map_lwm<-na.omit(lw_molting)
-
-new.map_lwm$treatment<-as.factor(new.map_lwm$treatment)
-new.map_lwm$treatment <- factor(new.map_lwm$treatment, c('no_resource','water','wheast','sugar','cmbs_eggs','wheast_cmbs','sugar_cmbs'))
-
-#Boxplots on same graph
-library(ggplot2)
-ggplot(new.map_lwm, mapping=aes(x=treatment, y=day, fill=molt))+
-  geom_boxplot(aes(fill=molt))+
-  theme_bw()+
-  xlab("Treatment")+
-  ylab("Days to molt")+
-  scale_x_discrete(labels=c('No resource', 'Water', 'Wheast', 'Fructose','CMBS','Wheast & CMBS', 'Fructose & CMBS'))+
-  labs(fill='LW Development')+
-  scale_fill_manual(labels= c("Molt 1","Molt 2"),values=c('mistyrose2','khaki2'))
-
-#Panelled Boxplots
-days_to_molt<-ggplot(new.map_lwm, mapping=aes(x=treatment, y=day, fill=molt))+
-  geom_boxplot(aes(fill=molt))+
-  theme_bw()+
-  xlab("Treatment")+
-  ylab("Days to molt")+
-  scale_x_discrete(labels=c('No resource', 'Water', 'Wheast', 'Fructose','CMBS','Wheast & CMBS', 'Fructose & CMBS'))+
-  labs(fill='LW Development')+
-  scale_fill_manual(labels= c("Molt 1","Molt 2"),values=c('mistyrose2','khaki2'))+
-  facet_wrap(~molt, labeller=labeller(molt=
-                                        c("molt1"= "Molt 1",
-                                          "molt2"="Molt 2")))+
-  theme(axis.text.x = element_text(angle = 40, vjust = 0.6, hjust=0.5))+
-  theme(legend.position="none")
-
-#Panel proportion molted and day taken to molt
-library(ggpubr)
-lw_development <- ggarrange(percentage_molted, days_to_molt,
-                            labels = c("A", "B"),
-                            ncol = 1, nrow = 2)
-lw_development
-
 
 #### molting curves ####
 
@@ -454,12 +350,68 @@ days_to_molt_curves <- arrange_ggsurvplots(lw_molt1_curv, lw_molt2_curv,
 
 
 
-#old code for molting curves
+#old code for molting analysis
 
 #still do logistic for percentage for first and second molt
 #first molt, analyze all treatments, using cph model for first molt and treatments for all molters in each treatment
 #graphs= replace boxplots with survival curves, only includes treatments in which only one individuals
 
+### MOLT 1 GLM
+library(readr)
+library(lme4)
+glm_molt1<-glmer(raw_molt1~treatment+(1|date), poisson(link = 'log'), data=lw_survival)
+summary(glm_molt1)
+
+library(car)
+Anova(glm_molt1)
+emmeans(glm_molt1)
+
+#SECOND MOLT
+glm_molt2<-glm(molt2~treatment,poisson(link = 'log'), data=lw_survival)
+Anova(glm_molt2)
+summary(glm_molt2)
+
+
+#GRAPH THE DATA
+library(readr)
+lw_molting <- read_csv("lw_molting.csv")
+new.map_lwm<-na.omit(lw_molting)
+
+new.map_lwm$treatment<-as.factor(new.map_lwm$treatment)
+new.map_lwm$treatment <- factor(new.map_lwm$treatment, c('no_resource','water','wheast','sugar','cmbs_eggs','wheast_cmbs','sugar_cmbs'))
+
+#Boxplots on same graph
+library(ggplot2)
+ggplot(new.map_lwm, mapping=aes(x=treatment, y=day, fill=molt))+
+  geom_boxplot(aes(fill=molt))+
+  theme_bw()+
+  xlab("Treatment")+
+  ylab("Days to molt")+
+  scale_x_discrete(labels=c('No resource', 'Water', 'Wheast', 'Fructose','CMBS','Wheast & CMBS', 'Fructose & CMBS'))+
+  labs(fill='LW Development')+
+  scale_fill_manual(labels= c("Molt 1","Molt 2"),values=c('mistyrose2','khaki2'))
+
+#Panelled Boxplots
+days_to_molt<-ggplot(new.map_lwm, mapping=aes(x=treatment, y=day, fill=molt))+
+  geom_boxplot(aes(fill=molt))+
+  theme_bw()+
+  xlab("Treatment")+
+  ylab("Days to molt")+
+  scale_x_discrete(labels=c('No resource', 'Water', 'Wheast', 'Fructose','CMBS','Wheast & CMBS', 'Fructose & CMBS'))+
+  labs(fill='LW Development')+
+  scale_fill_manual(labels= c("Molt 1","Molt 2"),values=c('mistyrose2','khaki2'))+
+  facet_wrap(~molt, labeller=labeller(molt=
+                                        c("molt1"= "Molt 1",
+                                          "molt2"="Molt 2")))+
+  theme(axis.text.x = element_text(angle = 40, vjust = 0.6, hjust=0.5))+
+  theme(legend.position="none")
+
+#Panel proportion molted and day taken to molt
+library(ggpubr)
+lw_development <- ggarrange(percentage_molted, days_to_molt,
+                            labels = c("A", "B"),
+                            ncol = 1, nrow = 2)
+lw_development
 #Set treatments as a factor
 
 molt1_event <- read_csv("molt1_event.csv")
@@ -542,88 +494,18 @@ lw_plot
 
 
 
-#survival to molt- reanalyzing molt data
-library(readr)
-lw_survival<-read_csv("lw_survival.csv")
-
-#Set treatments as a factor
-lw_surv_molt<-as.data.frame(lw_survival)
-
-
-#molt1
-lw_surv_molt$treatment<-factor(lw_surv_molt$treatment, c("no_resource","water","cmbs_eggs","wheast","sugar","wheast_cmbs","sugar_cmbs"))
-
-#create a formula using Surv(time,event), time=time until event occur. event= 1(event happened), 0(event did not happen)
-lw_molt1_surv<-Surv(time=lw_surv_molt$molt1, event=(lw_surv_molt$event1))
-
-#mixed effects analysis
-cox_prop3<-coxme(lw_molt1_surv~treatment+(1|date), data=lw_surv_molt)
-cox_prop3
-summary(cox_prop3)
-
-
-#check assumptions of proportional hazards
-ph_test<-cox.zph(cox_prop3) #assumption is not met, p<0.05; suggested to add interaction of covariate*time
-ph_test
-plot(ph_test)
-
-#deviance- results are symmetrical around 0
-cox_prop4<-coxph(lw_molt1_surv~treatment, data=lw_surv_molt)
-ggcoxdiagnostics(cox_prop4, type = "deviance", linear.predictions = FALSE)
-
-#post-hoc analysis
-library(emmeans)
-emmeans(cox_prop3, pairwise~treatment)
-
-#Plot all data
-library(survminer)
-
-#define variable being plotted using "strata"
-cox_prop3<-coxph(lw_molt1_surv~strata(treatment), data=lw_surv_molt)
-fit2<-survfit(cox_prop3)
-fit2
-lw_plot<-ggsurvplot(fit2, data=molt1_event, risk.table=FALSE)
-lw_plot
-
-#molt2
-library(dplyr)
-lw_molt2 <- lw_surv_molt %>% filter(treatment %in% c("wheast", "wheast_cmbs","sugar_cmbs"))
-lw_molt2$treatment <- as.factor(lw_molt2$treatment)
-lw_molt2$treatment<-factor(lw_molt2$treatment, c("wheast","wheast_cmbs","sugar_cmbs"))
-
-lw_molt2_surv<-Surv(time=lw_molt2$molt2, event=(lw_molt2$event2))
-
-#mixed effects analysis
-cox_prop3<-coxme(lw_molt2_surv~treatment+(1|date), data=lw_molt2)
-cox_prop3
-summary(cox_prop3)
-
-#post-hoc analysis
-library(emmeans)
-emmeans(cox_prop3, pairwise~treatment)
-
-#Plot all data
-library(survminer)
-
-#define variable being plotted using "strata"
-cox_prop3<-coxph(lw_molt2_surv~strata(treatment), data=lw_molt2)
-fit2<-survfit(cox_prop3)
-fit2
-lw_plot<-ggsurvplot(fit2, data=molt1_event, risk.table=FALSE)
-lw_plot
 
 ####CHOICE ASSAYS####
 
-#Chi squared practice code
-library(readr)
-choice <- read_csv("choice.csv")
-choice$choice_char <- ifelse(choice$choice1 == 0, "water", "wheast")
-
+#load package
+choice<- read_csv("choice.csv")
 
 # LACEWING CHOICE ASSAYS
-library(readr)
-lw_choice <- read_csv("lw_choice.csv")
+#subset data
+lw_total_choice<-choice[choice$predator=='lacewing',]
 
+#remove non-choosers
+lw_choice<-na.omit(lw_total_choice)
 
 #WHEAST
 lw_wheast<-lw_choice[lw_choice$treatment=='wheast_control',]
@@ -710,7 +592,11 @@ lw_choice_combo
 ##sdb choice
 
 library(readr)
-sdb_choice <- read_csv("sdb_choice.csv")
+choice<-read_csv("choice.csv")
+
+sdb_total_choices<-choice[choice$predator=='sdb',]
+
+sdb_choice<- na.omit(sdb_total_choices)
 
 #WHEAST
 sdb_wheast<-sdb_choice[sdb_choice$treatment=='wheast_control',]
