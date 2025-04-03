@@ -870,10 +870,14 @@ ggplot(sdb_res, mapping=aes(x=total_cmbs, y=sdb_sightings))+
   geom_boxplot()
 
 ###PANEL RESIDENCY
+library(readr)
+treatment_res<-read_csv("treatment_res.csv")
+
 #CONTROL
 library(readr)
 library(ggplot2)
-control_res<-read_csv("control_res.csv")
+
+control_res<-treatment_res[treatment_res$treatment=='control',]
 control_res$plant<-as.factor(control_res$plant)
 
 control<-ggplot(control_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
@@ -887,8 +891,7 @@ control<-ggplot(control_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
 control
 
 ###SPRITE
-
-sprite_res<-read_csv("sprite_res.csv")
+sprite_res<-treatment_res[treatment_res$treatment=='sprite',]
 sprite_res$plant<-as.factor(sprite_res$plant)
 
 sprite<-ggplot(sprite_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
@@ -902,8 +905,7 @@ sprite<-ggplot(sprite_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
 sprite
 
 #Fructose
-
-fructose_res<-read_csv("fructose_res.csv")
+fructose_res<-treatment_res[treatment_res$treatment=='fructose',]
 fructose_res$plant<-as.factor(fructose_res$plant)
 
 fructose<-ggplot(fructose_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
@@ -918,8 +920,7 @@ fructose<-ggplot(fructose_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
 fructose
 
 #Wheast Paste
-
-wheast_paste_res<-read_csv("wheast_paste_res.csv")
+wheast_paste_res<-treatment_res[treatment_res$treatment=='wheast_paste',]
 wheast_paste_res$plant<-as.factor(wheast_paste_res$plant)
 
 wheast_paste<-ggplot(wheast_paste_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
@@ -933,8 +934,7 @@ wheast_paste<-ggplot(wheast_paste_res, mapping=aes(x=day, y=num_sdb, colour=plan
 wheast_paste
 
 #Wheast spray
-
-wheast_spray_res<-read_csv("wheast_spray_res.csv")
+wheast_spray_res<-treatment_res[treatment_res$treatment=='wheast_spray',]
 wheast_spray_res$plant<-as.factor(wheast_spray_res$plant)
 
 wheast_spray<-ggplot(wheast_spray_res, mapping=aes(x=day, y=num_sdb, colour=plant))+
